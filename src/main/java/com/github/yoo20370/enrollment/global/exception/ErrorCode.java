@@ -1,0 +1,45 @@
+package com.github.yoo20370.enrollment.global.exception;
+
+public enum ErrorCode {
+    // Common
+    COMMON_INVALID_INPUT(400, "잘못된 입력값입니다."),
+    COMMON_UNAUTHORIZED(401, "유효하지 않은 사용자입니다."),
+    COMMON_FORBIDDEN(403, "권한이 없습니다."),
+
+    // User
+    USER_NOT_FOUND(404, "해당 유저를 찾을 수 없습니다."),
+
+    // Course
+    COURSE_NOT_FOUND(404, "강의를 찾을 수 없습니다."),
+    COURSE_NOT_OPEN(400, "신청 가능한 강의가 아닙니다."),
+    COURSE_FULL(409, "정원이 초과되었습니다."),
+
+    // Enrollment
+    ENROLLMENT_NOT_FOUND(404, "신청 정보를 찾을 수 없습니다."),
+    ENROLLMENT_ALREADY_ENROLLED(409, "이미 신청한 강의입니다."),
+    ENROLLMENT_ALREADY_CANCELLED(409, "이미 취소된 수강 신청입니다."),
+    ENROLLMENT_CANCELLATION_EXPIRED(409, "취소 가능 기간이 지났습니다."),
+
+    // Payment
+    PAYMENT_NOT_FOUND(404, "결제 정보를 찾을 수 없습니다."),
+    PAYMENT_ALREADY_PAID(409, "이미 결제된 수강 신청입니다."),
+    PAYMENT_FAILED(500, "결제에 실패했습니다."),
+
+    INTERNAL_SERVER_ERROR(500,"서버 내부 오류가 발생했습니다.");
+
+    private final int status;
+    private final String message;
+
+    ErrorCode(int status, String message) {
+        this.status = status;
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+}
