@@ -1,0 +1,53 @@
+package com.github.yoo20370.enrollment.enrollment.controller;
+
+import com.github.yoo20370.enrollment.enrollment.controller.request.CreateEnrollmentRequest;
+import com.github.yoo20370.enrollment.enrollment.controller.response.CreateEnrollmentResponse;
+import com.github.yoo20370.enrollment.enrollment.service.EnrollmentService;
+import com.github.yoo20370.enrollment.global.common.ApiResponse;
+import com.github.yoo20370.enrollment.global.exception.CustomException;
+import com.github.yoo20370.enrollment.global.exception.ErrorCode;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/v1/enrollments")
+@RequiredArgsConstructor
+@Validated
+public class EnrollmentControllerV1 implements EnrollmentController {
+
+    private final EnrollmentService enrollmentService;
+
+    @PostMapping
+    @Override
+    public ResponseEntity<ApiResponse<CreateEnrollmentResponse>> enroll(
+        @NotNull @RequestHeader("X-User-Id") String requesterId,
+        @Valid @RequestBody CreateEnrollmentRequest request) {
+
+        CreateEnrollmentResponse response = enrollmentService.enroll(
+            convertUuidFrom(request.getCourseId()),
+            convertUuidFrom(requesterId)
+        );
+
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(ApiResponse.of(response));
+    }
+
+    private static UUID convertUuidFrom(String requesterId) {
+        try {
+            return UUID.fromString(requesterId);
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(ErrorCode.COMMON_INVALID_INPUT);
+        }
+    }
+}

@@ -74,4 +74,15 @@ public class User extends BaseEntity {
             throw new UserException(ErrorCode.COMMON_FORBIDDEN);
         }
     }
+
+    public void validateStudent() {
+        this.activeStatus.validateActive();
+        if (this.role != UserRole.STUDENT) {
+            throw new UserException(ErrorCode.COMMON_FORBIDDEN);
+        }
+    }
+
+    public void validateActiveStatus() {
+        this.activeStatus.validateActive();
+    }
 }

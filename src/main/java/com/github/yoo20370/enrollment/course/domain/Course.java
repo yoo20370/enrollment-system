@@ -88,4 +88,24 @@ public class Course extends BaseEntity {
             .build();
     }
 
+    public void validateCapacity() {
+        if (this.currentCount >= this.capacity) {
+            throw new CourseException(ErrorCode.COURSE_FULL);
+        }
+    }
+
+    public void validateStatus() {
+        if (this.status != CourseStatus.OPEN) {
+            throw new CourseException(ErrorCode.COURSE_NOT_OPEN);
+        }
+    }
+
+    public void increaseCount() {
+        this.currentCount++;
+    }
+
+    public void decreaseCount() {
+        this.currentCount--;
+    }
+
 }
