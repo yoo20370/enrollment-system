@@ -3,13 +3,17 @@ package com.github.yoo20370.enrollment.course.domain;
 import com.github.yoo20370.enrollment.course.exception.CourseException;
 import com.github.yoo20370.enrollment.global.domain.BaseEntity;
 import com.github.yoo20370.enrollment.global.exception.ErrorCode;
+import com.github.yoo20370.enrollment.user.domain.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -32,8 +36,9 @@ public class Course extends BaseEntity {
     @Column(name = "id")
     private UUID id;
 
-    @Column(name="instructor_id", nullable = false)
-    private UUID instructorId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "instructor_id")
+    private User instructor;
 
     @Column(name="title")
     private String title;
@@ -60,7 +65,7 @@ public class Course extends BaseEntity {
     @Column(name = "end_at", nullable = false)
     private LocalDateTime endAt;
 
-    public static Course create(UUID instructorId, String title, String description,
+    public static Course create(User instructor, String title, String description,
         Long price, Integer capacity,
         LocalDateTime startAt, LocalDateTime endAt
         ) {
@@ -71,7 +76,7 @@ public class Course extends BaseEntity {
         if (endAt.isBefore(startAt)) throw new CourseException(ErrorCode.COURSE_INVALID_END_DATE);
 
         return Course.builder()
-            .instructorId(instructorId)
+            .instructor(instructor)
             .title(title)
             .description(description)
             .price(price)

@@ -31,7 +31,7 @@ public class CourseInfo {
             .capacity(course.getCapacity())
             .currentCount(course.getCurrentCount())
             .status(course.getStatus().getDescription())
-            .instructor((instructorName != null ? instructorName : "알 수 없는 사용자"))
+            .instructor(instructorName)
             .startAt(course.getStartAt())
             .endAt(course.getEndAt())
             .build();

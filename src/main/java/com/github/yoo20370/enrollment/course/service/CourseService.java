@@ -37,7 +37,7 @@ public class CourseService {
         findUser.validateInstructor();
 
         Course newCourse = Course.create(
-            userId,
+            findUser,
             command.getTitle(),
             command.getDescription(),
             command.getPrice(),
@@ -59,7 +59,7 @@ public class CourseService {
         Page<Course> coursePage = courseRepository.findAllByStatus(status, pageable);
 
         List<UUID> instructorIds = coursePage.getContent().stream()
-            .map(Course::getInstructorId)
+            .map(course -> course.getInstructor().getId())
             .distinct()
             .toList();
 
@@ -68,10 +68,13 @@ public class CourseService {
             .collect(Collectors.toMap(User::getId, u -> u));
 
         return coursePage.map(
-            course -> CourseInfo.of(
-                course,
-                userMap.get(course.getInstructorId()).getName()
-            )
+            course -> {
+                User instructor = userMap.get(course.getInstructor().getId());
+                return CourseInfo.of(
+                    course,
+                    instructor != null ? instructor.getName() : null
+                );
+            }
         );
     }
 }
