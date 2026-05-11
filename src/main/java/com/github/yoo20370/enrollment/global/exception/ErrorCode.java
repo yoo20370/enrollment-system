@@ -8,6 +8,9 @@ public enum ErrorCode {
 
     // User
     USER_NOT_FOUND(404, "해당 유저를 찾을 수 없습니다."),
+    USER_INVALID_ROLE(400, "존재하지 않는 역할입니다."),
+    USER_DUPLICATE_EMAIL(409, "이미 사용 중인 이메일입니다."),
+    USER_INVALID_STATUS(400, "유효하지 않은 사용자 상태입니다."),
 
     // Course
     COURSE_NOT_FOUND(404, "강의를 찾을 수 없습니다."),
