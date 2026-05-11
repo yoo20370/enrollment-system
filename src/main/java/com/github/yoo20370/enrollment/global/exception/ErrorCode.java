@@ -13,6 +13,10 @@ public enum ErrorCode {
     USER_INVALID_STATUS(400, "유효하지 않은 사용자 상태입니다."),
 
     // Course
+    COURSE_INVALID_PRICE(400, "강의 가격은 0 이상이어야 합니다."),
+    COURSE_INVALID_CAPACITY(400, "강의 정원은 0 이상이어야 합니다."),
+    COURSE_INVALID_START_DATE(400, "시작일은 오늘 이후여야 합니다."),
+    COURSE_INVALID_END_DATE(400, "종료일은 시작일 이후여야 합니다."),
     COURSE_NOT_FOUND(404, "강의를 찾을 수 없습니다."),
     COURSE_NOT_OPEN(400, "신청 가능한 강의가 아닙니다."),
     COURSE_FULL(409, "정원이 초과되었습니다."),
