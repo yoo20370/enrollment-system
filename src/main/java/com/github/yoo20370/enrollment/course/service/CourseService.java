@@ -11,14 +11,17 @@ import com.github.yoo20370.enrollment.user.repository.UserRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CourseService {
 
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public CreateCourseResponse create(CreateCourseCommand command, UUID userId) {
 
         User findUser = userRepository.findById(userId)
