@@ -11,6 +11,7 @@ public enum ErrorCode {
     USER_INVALID_ROLE(400, "존재하지 않는 역할입니다."),
     USER_DUPLICATE_EMAIL(409, "이미 사용 중인 이메일입니다."),
     USER_INVALID_STATUS(400, "유효하지 않은 사용자 상태입니다."),
+    USER_NOT_MATCH(409, "사용자가 일치하지 않습니다."),
 
     // Course
     COURSE_INVALID_PRICE(400, "강의 가격은 0 이상이어야 합니다."),
@@ -26,6 +27,7 @@ public enum ErrorCode {
     ENROLLMENT_ALREADY_ENROLLED(409, "이미 신청한 강의입니다."),
     ENROLLMENT_ALREADY_CANCELLED(409, "이미 취소된 수강 신청입니다."),
     ENROLLMENT_CANCELLATION_EXPIRED(409, "취소 가능 기간이 지났습니다."),
+    ENROLLMENT_INVALID_STATUS(409, "유효한 신청 상태가 아닙니다."),
 
     // Payment
     PAYMENT_NOT_FOUND(404, "결제 정보를 찾을 수 없습니다."),
