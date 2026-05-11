@@ -1,9 +1,11 @@
 package com.github.yoo20370.enrollment.course.service;
 
+import com.github.yoo20370.enrollment.course.controller.response.CourseDetail;
 import com.github.yoo20370.enrollment.course.controller.response.CourseInfo;
 import com.github.yoo20370.enrollment.course.controller.response.CreateCourseResponse;
 import com.github.yoo20370.enrollment.course.domain.Course;
 import com.github.yoo20370.enrollment.course.domain.CourseStatus;
+import com.github.yoo20370.enrollment.course.exception.CourseException;
 import com.github.yoo20370.enrollment.course.repository.CourseRepository;
 import com.github.yoo20370.enrollment.course.service.command.CreateCourseCommand;
 import com.github.yoo20370.enrollment.global.exception.ErrorCode;
@@ -76,5 +78,15 @@ public class CourseService {
                 );
             }
         );
+    }
+
+    public CourseDetail findCourse(UUID courseId) {
+
+        Course findCourse = courseRepository.findById(courseId)
+            .orElseThrow(
+                () -> new CourseException(ErrorCode.COURSE_NOT_FOUND)
+            );
+
+        return CourseDetail.of(findCourse);
     }
 }

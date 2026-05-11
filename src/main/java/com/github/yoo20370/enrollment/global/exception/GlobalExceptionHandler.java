@@ -5,8 +5,10 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -41,6 +43,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity
             .status(400)
             .body(ErrorResponse.of(ErrorCode.COMMON_INVALID_INPUT, e.getMessage()));
+    }
+
+    // 헤드 누락 시 처리
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ResponseEntity<ErrorResponse> handleMissingRequestHeader(MissingRequestHeaderException e) {
+        return ResponseEntity.status(400)
+            .body(ErrorResponse.of(ErrorCode.COMMON_INVALID_INPUT, e.getHeaderName() + " 헤더가 필요합니다."));
+    }
+
+    // Enum에 해당하지 않는 값이 입력값으로 들어오는 경우 처리
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException e) {
+        return ResponseEntity.status(400)
+            .body(ErrorResponse.of(ErrorCode.COMMON_INVALID_INPUT));
     }
 
     // 그 외 예상치 못한 예외

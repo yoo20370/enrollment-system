@@ -1,6 +1,7 @@
 package com.github.yoo20370.enrollment.course.controller;
 
 import com.github.yoo20370.enrollment.course.controller.request.CreateCourseRequest;
+import com.github.yoo20370.enrollment.course.controller.response.CourseDetail;
 import com.github.yoo20370.enrollment.course.controller.response.CourseInfo;
 import com.github.yoo20370.enrollment.course.controller.response.CreateCourseResponse;
 import com.github.yoo20370.enrollment.course.domain.CourseStatus;
@@ -8,7 +9,6 @@ import com.github.yoo20370.enrollment.global.common.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestParam;
 
 public interface CourseController {
 
@@ -21,5 +21,7 @@ public interface CourseController {
         CourseStatus status,
         Pageable pageable
     );
+
+    ResponseEntity<ApiResponse<CourseDetail>> findCourse(String courseId);
 
 }
