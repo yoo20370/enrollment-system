@@ -1,6 +1,7 @@
 package com.github.yoo20370.enrollment.course.controller;
 
 import com.github.yoo20370.enrollment.course.controller.request.CreateCourseRequest;
+import com.github.yoo20370.enrollment.course.controller.response.CourseDetail;
 import com.github.yoo20370.enrollment.course.controller.response.CourseInfo;
 import com.github.yoo20370.enrollment.course.controller.response.CreateCourseResponse;
 import com.github.yoo20370.enrollment.course.domain.CourseStatus;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -57,6 +59,20 @@ public class CourseControllerV1 implements CourseController{
         Pageable pageable) {
 
         Page<CourseInfo> response = courseService.findCourses(status, pageable);
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(ApiResponse.of(response));
+    }
+
+    @GetMapping("/{id}")
+    @Override
+    public ResponseEntity<ApiResponse<CourseDetail>> findCourse(
+        @PathVariable("id") String id) {
+
+        CourseDetail response = courseService.findCourse(
+            getUuid(id)
+        );
 
         return ResponseEntity
             .status(HttpStatus.OK)
