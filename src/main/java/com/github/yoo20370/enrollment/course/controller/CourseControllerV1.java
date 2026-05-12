@@ -7,6 +7,7 @@ import com.github.yoo20370.enrollment.course.controller.response.CreateCourseRes
 import com.github.yoo20370.enrollment.course.domain.CourseStatus;
 import com.github.yoo20370.enrollment.course.service.CourseService;
 import com.github.yoo20370.enrollment.course.service.command.CreateCourseCommand;
+import com.github.yoo20370.enrollment.enrollment.controller.response.CourseStudentResponse;
 import com.github.yoo20370.enrollment.global.common.ApiResponse;
 import com.github.yoo20370.enrollment.global.exception.CustomException;
 import com.github.yoo20370.enrollment.global.exception.ErrorCode;
@@ -42,7 +43,7 @@ public class CourseControllerV1 implements CourseController{
         @NotNull @RequestHeader("X-User-Id") String requesterId,
         @Valid @RequestBody CreateCourseRequest request) {
 
-        UUID userId = getUuid(requesterId);
+        UUID userId = convertUuidFrom(requesterId);
 
         CreateCourseResponse response = courseService.create(
             CreateCourseCommand.of(request),
@@ -73,7 +74,7 @@ public class CourseControllerV1 implements CourseController{
         @PathVariable("id") String id) {
 
         CourseDetail response = courseService.findCourse(
-            getUuid(id)
+            convertUuidFrom(id)
         );
 
         return ResponseEntity
@@ -81,7 +82,23 @@ public class CourseControllerV1 implements CourseController{
             .body(ApiResponse.of(response));
     }
 
-    private static UUID getUuid(String requesterId) {
+    @GetMapping("/{id}/students")
+    @Override
+    public ResponseEntity<ApiResponse<CourseStudentResponse>> findCourseStudents(
+        @NotNull @RequestHeader("X-User-Id") String userId,
+        @PathVariable("id") String courseId) {
+
+        CourseStudentResponse response = courseService.findCourseStudents(
+            convertUuidFrom(courseId),
+            convertUuidFrom(userId)
+        );
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(ApiResponse.of(response));
+    }
+
+    private static UUID convertUuidFrom(String requesterId) {
         try {
             return UUID.fromString(requesterId);
         } catch (IllegalArgumentException e) {

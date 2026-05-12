@@ -5,6 +5,7 @@ import com.github.yoo20370.enrollment.course.controller.response.CourseDetail;
 import com.github.yoo20370.enrollment.course.controller.response.CourseInfo;
 import com.github.yoo20370.enrollment.course.controller.response.CreateCourseResponse;
 import com.github.yoo20370.enrollment.course.domain.CourseStatus;
+import com.github.yoo20370.enrollment.enrollment.controller.response.CourseStudentResponse;
 import com.github.yoo20370.enrollment.global.common.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,5 +24,10 @@ public interface CourseController {
     );
 
     ResponseEntity<ApiResponse<CourseDetail>> findCourse(String courseId);
+
+    ResponseEntity<ApiResponse<CourseStudentResponse>> findCourseStudents(
+        String userId,
+        String courseId
+    );
 
 }
