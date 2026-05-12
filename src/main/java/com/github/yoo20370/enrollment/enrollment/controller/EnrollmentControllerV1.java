@@ -1,6 +1,7 @@
 package com.github.yoo20370.enrollment.enrollment.controller;
 
 import com.github.yoo20370.enrollment.enrollment.controller.request.CreateEnrollmentRequest;
+import com.github.yoo20370.enrollment.enrollment.controller.response.CancelEnrollmentResponse;
 import com.github.yoo20370.enrollment.enrollment.controller.response.CreateEnrollmentResponse;
 import com.github.yoo20370.enrollment.enrollment.service.EnrollmentService;
 import com.github.yoo20370.enrollment.global.common.ApiResponse;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -40,6 +43,22 @@ public class EnrollmentControllerV1 implements EnrollmentController {
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
+            .body(ApiResponse.of(response));
+    }
+
+    @DeleteMapping("/{id}")
+    @Override
+    public ResponseEntity<ApiResponse<CancelEnrollmentResponse>> cancel(
+        @NotNull @RequestHeader("X-User-Id") String userId,
+        @PathVariable("id") String enrollmentId) {
+
+        CancelEnrollmentResponse response = enrollmentService.cancel(
+            convertUuidFrom(enrollmentId),
+            convertUuidFrom(userId)
+        );
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
             .body(ApiResponse.of(response));
     }
 
