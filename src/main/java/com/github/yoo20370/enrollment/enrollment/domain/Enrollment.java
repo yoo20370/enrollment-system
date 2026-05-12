@@ -27,9 +27,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name="enrollment")
 @Getter
-@Builder(access = AccessLevel.PRIVATE)
+@Builder(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Enrollment extends BaseEntity {
 
     @Id
