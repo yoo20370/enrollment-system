@@ -76,4 +76,19 @@ public class Payment extends BaseEntity {
             .provider(Provider.valueOf(provider))
             .build();
     }
+
+    public void validatePaid() {
+        if (status.isNotPaid()) {
+            if (status.isCancelled()) {
+                throw new PaymentException(ErrorCode.PAYMENT_ALREADY_CANCELLED);
+            } else {
+                throw new PaymentException(ErrorCode.PAYMENT_INVALID_STATUS);
+            }
+        }
+    }
+
+    public void cancel(LocalDateTime now) {
+        this.status = PaymentStatus.CANCELLED;
+        this.cancelledAt = now;
+    }
 }

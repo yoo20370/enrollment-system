@@ -67,12 +67,12 @@ public class Course extends BaseEntity {
 
     public static Course create(User instructor, String title, String description,
         Long price, Integer capacity,
-        LocalDateTime startAt, LocalDateTime endAt
+        LocalDateTime startAt, LocalDateTime endAt, LocalDateTime now
         ) {
 
         if (price < 0) throw new CourseException(ErrorCode.COURSE_INVALID_PRICE);
         if (capacity <= 0) throw new CourseException(ErrorCode.COURSE_INVALID_CAPACITY);
-        if (startAt.isBefore(LocalDateTime.now())) throw new CourseException(ErrorCode.COURSE_INVALID_START_DATE);
+        if (startAt.isBefore(now)) throw new CourseException(ErrorCode.COURSE_INVALID_START_DATE);
         if (endAt.isBefore(startAt)) throw new CourseException(ErrorCode.COURSE_INVALID_END_DATE);
 
         return Course.builder()

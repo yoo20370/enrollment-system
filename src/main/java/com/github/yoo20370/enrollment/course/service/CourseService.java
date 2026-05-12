@@ -12,6 +12,8 @@ import com.github.yoo20370.enrollment.global.exception.ErrorCode;
 import com.github.yoo20370.enrollment.user.domain.User;
 import com.github.yoo20370.enrollment.user.exception.UserException;
 import com.github.yoo20370.enrollment.user.repository.UserRepository;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -29,6 +31,7 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
+    private final Clock clock;
 
     @Transactional
     public CreateCourseResponse create(CreateCourseCommand command, UUID userId) {
@@ -45,7 +48,8 @@ public class CourseService {
             command.getPrice(),
             command.getCapacity(),
             command.getStartAt(),
-            command.getEndAt()
+            command.getEndAt(),
+            LocalDateTime.now(clock)
         );
 
         Course savedCourse = courseRepository.save(newCourse);

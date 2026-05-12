@@ -16,4 +16,17 @@ public enum PaymentStatus {
     public String getDescription() {
         return description;
     }
+
+    public boolean isPaid() {
+        return this == PAID;
+    }
+
+    public boolean isNotPaid() {
+        return this != PAID;
+    }
+
+    public boolean isCancelled() {
+        return this == CANCELLED;
+    }
+
 }

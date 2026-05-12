@@ -12,6 +12,8 @@ import com.github.yoo20370.enrollment.payment.repository.PaymentRepository;
 import com.github.yoo20370.enrollment.user.domain.User;
 import com.github.yoo20370.enrollment.user.exception.UserException;
 import com.github.yoo20370.enrollment.user.repository.UserRepository;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class PaymentService {
     private final UserRepository userRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final PaymentGateway paymentGateway;
+    private final Clock clock;
 
     @Transactional
     public PaymentResponse pay(UUID enrollmentId, UUID userId) {
@@ -59,7 +62,7 @@ public class PaymentService {
         );
         Payment savedPayment = paymentRepository.save(payment);
 
-        enrollment.confirm();
+        enrollment.confirm(LocalDateTime.now(clock));
 
         return PaymentResponse.of(savedPayment);
     }
