@@ -4,6 +4,7 @@ import com.github.yoo20370.enrollment.course.domain.Course;
 import com.github.yoo20370.enrollment.course.exception.CourseException;
 import com.github.yoo20370.enrollment.course.repository.CourseRepository;
 import com.github.yoo20370.enrollment.enrollment.controller.response.CancelEnrollmentResponse;
+import com.github.yoo20370.enrollment.enrollment.controller.response.EnrollmentInfo;
 import com.github.yoo20370.enrollment.enrollment.repository.EnrollmentRepository;
 import com.github.yoo20370.enrollment.enrollment.controller.response.CreateEnrollmentResponse;
 import com.github.yoo20370.enrollment.enrollment.domain.Enrollment;
@@ -17,9 +18,14 @@ import com.github.yoo20370.enrollment.user.exception.UserException;
 import com.github.yoo20370.enrollment.user.repository.UserRepository;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,5 +106,30 @@ public class EnrollmentService {
         enrollment.cancel(now);
 
         return CancelEnrollmentResponse.of(enrollment, course, payment);
+    }
+
+    public Page<EnrollmentInfo> findMyEnrollments(UUID userId, Pageable pageable) {
+
+        User user = userRepository.findById(userId)
+            .orElseThrow(
+                () -> new UserException(ErrorCode.USER_NOT_FOUND)
+            );
+        user.validateActiveStatus();
+
+        Page<Enrollment> enrollmentPage = enrollmentRepository.findByUserId(userId, pageable);
+
+        List<UUID> courseIds = enrollmentPage.getContent().stream()
+            .map(e -> e.getCourse().getId())
+            .distinct()
+            .toList();
+
+        Map<UUID, Course> courseMap = courseRepository.findAllById(courseIds)
+            .stream()
+            .collect(Collectors.toMap(Course::getId, c -> c));
+
+        return enrollmentPage.map(e -> {
+            Course course = courseMap.get(e.getCourse().getId());
+            return EnrollmentInfo.of(e, course);
+        });
     }
 }
