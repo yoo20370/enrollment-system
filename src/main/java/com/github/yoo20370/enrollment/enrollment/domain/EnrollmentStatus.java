@@ -23,4 +23,9 @@ public enum EnrollmentStatus {
     public boolean isNotPending() {
         return !isPending();
     }
+
+    public boolean isCancelled() {
+        return this == CANCELED;
+    }
+
 }

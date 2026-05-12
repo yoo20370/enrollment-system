@@ -68,13 +68,34 @@ public class Enrollment extends BaseEntity {
         }
     }
 
+    public void validateConfirmed() {
+        if (status.isCancelled()) {
+            throw new EnrollmentException(ErrorCode.ENROLLMENT_ALREADY_CANCELLED);
+        } else if (status.isPending()) {
+            throw new EnrollmentException(ErrorCode.ENROLLMENT_INVALID_STATUS);
+        }
+    }
+
     public void validateOwner(UUID userId) {
         if (!user.getId().equals(userId)) {
             throw new EnrollmentException(ErrorCode.COMMON_FORBIDDEN);
         }
     }
 
-    public void confirm() {
-        this.status = EnrollmentStatus.CONFIRMED;
+    public void validateCancellable(LocalDateTime now, Integer cancellationPeriod) {
+        if (confirmedAt == null || !confirmedAt.plusDays(cancellationPeriod).isAfter(now)) {
+            throw new EnrollmentException(ErrorCode.ENROLLMENT_CANCELLATION_EXPIRED);
+        }
     }
+
+    public void confirm(LocalDateTime now) {
+        this.status = EnrollmentStatus.CONFIRMED;
+        this.confirmedAt = now;
+    }
+
+    public void cancel(LocalDateTime now) {
+        this.status = EnrollmentStatus.CANCELED;
+        this.cancelledAt = now;
+    }
+
 }
