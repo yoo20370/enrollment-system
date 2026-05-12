@@ -33,6 +33,8 @@ public enum ErrorCode {
     PAYMENT_NOT_FOUND(404, "결제 정보를 찾을 수 없습니다."),
     PAYMENT_ALREADY_PAID(409, "이미 결제된 수강 신청입니다."),
     PAYMENT_FAILED(500, "결제에 실패했습니다."),
+    PAYMENT_INVALID_STATUS(409, "유효하지 않은 결제 상태입니다."),
+    PAYMENT_ALREADY_CANCELLED(409, "이미 취소된 결제입니다."),
 
     INTERNAL_SERVER_ERROR(500,"서버 내부 오류가 발생했습니다.");
 
