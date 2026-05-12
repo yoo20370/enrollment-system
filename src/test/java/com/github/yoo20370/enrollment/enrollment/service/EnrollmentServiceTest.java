@@ -1,6 +1,7 @@
 package com.github.yoo20370.enrollment.enrollment.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -12,6 +13,7 @@ import com.github.yoo20370.enrollment.course.exception.CourseException;
 import com.github.yoo20370.enrollment.course.repository.CourseRepository;
 import com.github.yoo20370.enrollment.enrollment.controller.response.CancelEnrollmentResponse;
 import com.github.yoo20370.enrollment.enrollment.controller.response.CreateEnrollmentResponse;
+import com.github.yoo20370.enrollment.enrollment.controller.response.EnrollmentInfo;
 import com.github.yoo20370.enrollment.enrollment.domain.Enrollment;
 
 import com.github.yoo20370.enrollment.enrollment.domain.EnrollmentStatus;
@@ -29,6 +31,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,6 +44,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -475,4 +482,112 @@ class EnrollmentServiceTest {
             .isEqualTo(ErrorCode.PAYMENT_NOT_FOUND);
     }
 
+    @DisplayName("내 수강 신청 목록을 페이지네이션으로 조회하면 신청한 강의 목록이 반환된다")
+    @Test
+    void findMyEnrollments_success() {
+
+        // given
+        UUID userId = UUID.randomUUID();
+
+        User user = mock(User.class);
+
+        Course course1 = mock(Course.class);
+        Course course2 = mock(Course.class);
+
+        UUID courseId1 = UUID.randomUUID();
+        UUID courseId2 = UUID.randomUUID();
+
+        Enrollment enrollment1 = mock(Enrollment.class);
+        Enrollment enrollment2 = mock(Enrollment.class);
+
+        UUID enrollmentId1 = UUID.randomUUID();
+        UUID enrollmentId2 = UUID.randomUUID();
+
+        String title1 = "title1";
+        String title2 = "title2";
+
+        EnrollmentStatus status1 = EnrollmentStatus.CONFIRMED;
+        EnrollmentStatus status2 = EnrollmentStatus.PENDING;
+
+        LocalDateTime confirmedAt = LocalDateTime.of(2026, 5, 5, 0, 0, 0);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        when(userRepository.findById(userId))
+            .thenReturn(Optional.of(user));
+
+        when(enrollmentRepository.findByUserId(userId, pageable))
+            .thenReturn(new PageImpl<>(List.of(enrollment1, enrollment2)));
+
+        when(courseRepository.findAllById(anyList()))
+            .thenReturn(List.of(course1, course2));
+
+        when(enrollment1.getCourse())
+            .thenReturn(course1);
+
+        when(enrollment2.getCourse())
+            .thenReturn(course2);
+
+        when(course1.getId())
+            .thenReturn(courseId1);
+
+        when(course2.getId())
+            .thenReturn(courseId2);
+
+        when(enrollment1.getId())
+            .thenReturn(enrollmentId1);
+
+        when(enrollment2.getId())
+            .thenReturn(enrollmentId2);
+
+        when(course1.getTitle())
+            .thenReturn(title1);
+
+        when(course2.getTitle())
+            .thenReturn(title2);
+
+        when(enrollment1.getStatus())
+            .thenReturn(status1);
+
+        when(enrollment2.getStatus())
+            .thenReturn(status2);
+
+        when(enrollment1.getConfirmedAt())
+            .thenReturn(confirmedAt);
+
+        // when
+        Page<EnrollmentInfo> result = enrollmentService.findMyEnrollments(userId, pageable);
+
+        // /then
+        assertThat(result.getContent()).hasSize(2);
+        assertThat(result.getTotalElements()).isEqualTo(2);
+    }
+
+    @DisplayName("두 번째 페이지 조회 시 신청 내역이 없으면 빈 목록이 반환된다.")
+    @Test
+    void findMyEnrollments_success2() {
+
+        // given
+        UUID userId = UUID.randomUUID();
+
+        User user = mock(User.class);
+
+        Pageable pageable = PageRequest.of(1, 10);
+
+        when(userRepository.findById(userId))
+            .thenReturn(Optional.of(user));
+
+        when(enrollmentRepository.findByUserId(userId, pageable))
+            .thenReturn(new PageImpl<>(List.of()));
+
+        when(courseRepository.findAllById(anyList()))
+            .thenReturn(List.of());
+
+        // when
+        Page<EnrollmentInfo> result = enrollmentService.findMyEnrollments(userId, pageable);
+
+        // /then
+        assertThat(result.getContent()).isEmpty();
+        assertThat(result.getTotalElements()).isEqualTo(0);
+    }
 }
