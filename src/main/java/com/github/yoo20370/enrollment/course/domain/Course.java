@@ -114,4 +114,12 @@ public class Course extends BaseEntity {
         this.currentCount--;
     }
 
+    public boolean isNotDraft() {
+        return this.status.isNotDraft();
+    }
+
+    public boolean isNotOpen() {
+        return this.status.isNotOpen();
+    }
+
 }
