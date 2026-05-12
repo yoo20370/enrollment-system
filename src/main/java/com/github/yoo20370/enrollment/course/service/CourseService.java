@@ -8,6 +8,10 @@ import com.github.yoo20370.enrollment.course.domain.CourseStatus;
 import com.github.yoo20370.enrollment.course.exception.CourseException;
 import com.github.yoo20370.enrollment.course.repository.CourseRepository;
 import com.github.yoo20370.enrollment.course.service.command.CreateCourseCommand;
+import com.github.yoo20370.enrollment.enrollment.controller.response.CourseStudentResponse;
+import com.github.yoo20370.enrollment.enrollment.controller.response.StudentInfo;
+import com.github.yoo20370.enrollment.enrollment.domain.Enrollment;
+import com.github.yoo20370.enrollment.enrollment.repository.EnrollmentRepository;
 import com.github.yoo20370.enrollment.global.exception.ErrorCode;
 import com.github.yoo20370.enrollment.user.domain.User;
 import com.github.yoo20370.enrollment.user.exception.UserException;
@@ -30,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CourseService {
 
     private final CourseRepository courseRepository;
+    private final EnrollmentRepository enrollmentRepository;
     private final UserRepository userRepository;
     private final Clock clock;
 
@@ -92,5 +97,41 @@ public class CourseService {
             );
 
         return CourseDetail.of(findCourse);
+    }
+
+    public CourseStudentResponse findCourseStudents(UUID courseId, UUID userId) {
+
+        User instructor = userRepository.findById(userId)
+            .orElseThrow(
+                () -> new UserException(ErrorCode.USER_NOT_FOUND)
+            );
+        instructor.validateInstructor();
+
+        Course course = courseRepository.findById(courseId)
+            .orElseThrow(
+                () -> new CourseException(ErrorCode.COURSE_NOT_FOUND)
+            );
+        course.validateInstructor(userId);
+
+        List<Enrollment> enrollments = enrollmentRepository.findByCourseIdWithUser(courseId);
+
+        List<StudentInfo> students = enrollments.stream()
+            .map(e -> {
+                User student = e.getUser();
+                return StudentInfo.of(
+                    student.getId().toString(),
+                    student.getName(),
+                    student.getEmail()
+                );
+            })
+            .toList();
+        int confirmedCount = students.size();
+
+        return CourseStudentResponse.of(
+            courseId.toString(),
+            course.getTitle(),
+            confirmedCount,
+            students
+        );
     }
 }

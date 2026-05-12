@@ -100,6 +100,12 @@ public class Course extends BaseEntity {
         }
     }
 
+    public void validateInstructor(UUID userId) {
+        if (!instructor.getId().equals(userId)) {
+            throw new CourseException(ErrorCode.COMMON_FORBIDDEN);
+        }
+    }
+
     public void increaseCount() {
         this.currentCount++;
     }
