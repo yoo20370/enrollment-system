@@ -15,6 +15,19 @@ public enum CourseStatus {
         return description;
     }
 
+    public boolean isDraft() {
+        return this == DRAFT;
+    }
 
+    public boolean isNotDraft() {
+        return !isDraft();
+    }
 
+    public boolean isOpen() {
+        return this == OPEN;
+    }
+
+    public boolean isNotOpen() {
+        return !isOpen();
+    }
 }

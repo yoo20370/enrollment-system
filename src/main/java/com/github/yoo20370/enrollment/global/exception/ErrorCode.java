@@ -21,6 +21,8 @@ public enum ErrorCode {
     COURSE_NOT_FOUND(404, "강의를 찾을 수 없습니다."),
     COURSE_NOT_OPEN(400, "신청 가능한 강의가 아닙니다."),
     COURSE_FULL(409, "정원이 초과되었습니다."),
+    COURSE_INVALID_STATUS(409, "강의 상태가 유효하지 않습니다."),
+    COURSE_STATUS_UPDATE_FAIL(409, "강의 상태 변경에 실패했습니다."),
 
     // Enrollment
     ENROLLMENT_NOT_FOUND(404, "신청 정보를 찾을 수 없습니다."),
