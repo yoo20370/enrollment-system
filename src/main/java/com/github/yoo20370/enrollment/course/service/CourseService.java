@@ -3,6 +3,7 @@ package com.github.yoo20370.enrollment.course.service;
 import com.github.yoo20370.enrollment.course.controller.response.CourseDetail;
 import com.github.yoo20370.enrollment.course.controller.response.CourseInfo;
 import com.github.yoo20370.enrollment.course.controller.response.CreateCourseResponse;
+import com.github.yoo20370.enrollment.course.controller.response.UpdateCourseStatusResponse;
 import com.github.yoo20370.enrollment.course.domain.Course;
 import com.github.yoo20370.enrollment.course.domain.CourseStatus;
 import com.github.yoo20370.enrollment.course.exception.CourseException;
@@ -132,6 +133,84 @@ public class CourseService {
             course.getTitle(),
             confirmedCount,
             students
+        );
+    }
+
+    @Transactional
+    public UpdateCourseStatusResponse open(UUID courseId, UUID userId) {
+
+        User instructor = userRepository.findById(userId)
+            .orElseThrow(
+                () -> new UserException(ErrorCode.USER_NOT_FOUND)
+            );
+        instructor.validateInstructor();
+
+        Course course = courseRepository.findById(courseId)
+            .orElseThrow(
+                () -> new CourseException(ErrorCode.COURSE_NOT_FOUND)
+            );
+        course.validateInstructor(userId);
+        CourseStatus before = course.getStatus();
+
+        if (course.isNotDraft()) {
+            throw new CourseException(ErrorCode.COURSE_INVALID_STATUS);
+        }
+
+        int updated = courseRepository.open(courseId, userId);
+
+        if (updated != 1) {
+            throw new CourseException(ErrorCode.COURSE_STATUS_UPDATE_FAIL);
+        }
+
+        Course updatedCourse = courseRepository.findById(courseId)
+            .orElseThrow(
+                () -> new CourseException(ErrorCode.COURSE_NOT_FOUND)
+            );
+
+        return UpdateCourseStatusResponse.of(
+            updatedCourse.getId(),
+            before,
+            updatedCourse.getStatus(),
+            updatedCourse.getUpdatedAt()
+        );
+    }
+
+    @Transactional
+    public UpdateCourseStatusResponse close(UUID courseId, UUID userId) {
+
+        User instructor = userRepository.findById(userId)
+            .orElseThrow(
+                () -> new UserException(ErrorCode.USER_NOT_FOUND)
+            );
+        instructor.validateInstructor();
+
+        Course course = courseRepository.findById(courseId)
+            .orElseThrow(
+                () -> new CourseException(ErrorCode.COURSE_NOT_FOUND)
+            );
+        course.validateInstructor(userId);
+        CourseStatus before = course.getStatus();
+
+        if (course.isNotOpen()) {
+            throw new CourseException(ErrorCode.COURSE_INVALID_STATUS);
+        }
+
+        int updated = courseRepository.close(courseId, userId);
+
+        if (updated != 1) {
+            throw new CourseException(ErrorCode.COURSE_STATUS_UPDATE_FAIL);
+        }
+
+        Course updatedCourse = courseRepository.findById(courseId)
+            .orElseThrow(
+                () -> new CourseException(ErrorCode.COURSE_NOT_FOUND)
+            );
+
+        return UpdateCourseStatusResponse.of(
+            updatedCourse.getId(),
+            before,
+            updatedCourse.getStatus(),
+            updatedCourse.getUpdatedAt()
         );
     }
 }

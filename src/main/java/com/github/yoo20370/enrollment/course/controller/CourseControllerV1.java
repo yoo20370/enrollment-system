@@ -4,6 +4,7 @@ import com.github.yoo20370.enrollment.course.controller.request.CreateCourseRequ
 import com.github.yoo20370.enrollment.course.controller.response.CourseDetail;
 import com.github.yoo20370.enrollment.course.controller.response.CourseInfo;
 import com.github.yoo20370.enrollment.course.controller.response.CreateCourseResponse;
+import com.github.yoo20370.enrollment.course.controller.response.UpdateCourseStatusResponse;
 import com.github.yoo20370.enrollment.course.domain.CourseStatus;
 import com.github.yoo20370.enrollment.course.service.CourseService;
 import com.github.yoo20370.enrollment.course.service.command.CreateCourseCommand;
@@ -21,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -89,6 +91,38 @@ public class CourseControllerV1 implements CourseController{
         @PathVariable("id") String courseId) {
 
         CourseStudentResponse response = courseService.findCourseStudents(
+            convertUuidFrom(courseId),
+            convertUuidFrom(userId)
+        );
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(ApiResponse.of(response));
+    }
+
+    @PatchMapping("/{id}/open")
+    @Override
+    public ResponseEntity<ApiResponse<UpdateCourseStatusResponse>> open(
+        @NotNull @RequestHeader("X-User-Id") String userId,
+        @PathVariable("id") String courseId) {
+
+        UpdateCourseStatusResponse response = courseService.open(
+            convertUuidFrom(courseId),
+            convertUuidFrom(userId)
+        );
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(ApiResponse.of(response));
+    }
+
+    @PatchMapping("/{id}/close")
+    @Override
+    public ResponseEntity<ApiResponse<UpdateCourseStatusResponse>> close(
+        @NotNull @RequestHeader("X-User-Id") String userId,
+        @PathVariable("id") String courseId) {
+
+        UpdateCourseStatusResponse response = courseService.close(
             convertUuidFrom(courseId),
             convertUuidFrom(userId)
         );
