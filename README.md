@@ -2,12 +2,19 @@
 ## 프로젝트 개요
 ### 프로젝트 설명
 - 강사는 강의를 등록하고 수강생은 수강 신청 및 결제를 할 수 있는 수강 신청 시스템입니다.
+ 
+### 프로젝트 기간 
+**2026.05.09 ~ 2025.05.13(5일)**
+
 ### 문서화
 - 요구사항 분석, 객체 정의, 유스케이스 분석, API 명세서, ERD 문서 작성 후, 개발을 진행했습니다.
+
 ### 동시성 제어
 - 동시 신청 상황에서 정원이 초과되지 않도록 동시성 제어 로직을 구현했습니다.
+
 ### 계층 간 역할 분리 
 - 검증 로직은 도메인에 흐름 조율은 서비스로 나눔으로써 계층 간 역할을 분리하려고 노력했습니다.
+  
 ---
 ## 기술 스택
 | 분류 | 기술 |
@@ -21,6 +28,7 @@
 | Container | Docker, Docker Compose |
 ---
 ## 실행 방법 
+### Docker
 ```bash
 # 1. 저장소 클론
 git clone https://github.com/yoo20370/enrollment-system.git
@@ -32,6 +40,29 @@ cd enrollment-system
 # 3. Docker Compose 실행
 docker-compose up -d
 ```
+
+### Postman Collection
+`postman/enrollment-system.postman_collection.json` 파일을
+Postman에서 Import하면 바로 사용할 수 있습니다.
+
+또한 [API 명세서](https://earthy-grouse-d42.notion.site/API-35b5723e06ee803a9a87fc4bd4492508?pvs=74)에도
+샘플 요청/응답 JSON과 Postman Collection 파일이 업로드되어 있습니다.
+
+### 테스트 순서 (핵심 플로우)
+**[강의 관리]**
+1. 강의 관리 > 강의 등록
+2. 강의 관리 > 강의 목록 조회 (DRAFT, OPEN, CLOSE, 필터 X)
+3. 강의 관리 > 강의 상세 조회
+4. 강의 관리 > 강의 수강생 목록 (결제 완료 후, CONFIRMED 상태인 수강생만 목록에 표시됨)
+
+**[수강 신청/취소]** 
+1. 수강 신청/취소 > 수강신청
+2. 수강 신청/취소 > 결제진행
+3. 수강 신청/취소 > 수강취소
+4. 수강 신청/취소 > 취소강의 재신청
+5. 내 수강 신청 목록 (기본)
+6. 내 수강 신청 목록 (1page/size2)
+
 ---
 ## 요구사항 해석 및 가정
 ---
@@ -158,7 +189,7 @@ docker-compose up -d
 ERD는 [여기](https://www.erdcloud.com/d/cszbmdheWPhajGgCD)를 참고해 주세요.
 
 ### 설계 순서
-요구사항 분석 → 객체 간 협력 관계 파악 → 유스케이스 분석 → 책임 도출 → 필드 정의 순서로 설계했습니다.
+요구사항 분석 → 객체 간 협력 관계 파악 → 유스케이스 분석(성공 케이스 위주) → 책임 도출 → 필드 정의 순서로 설계했습니다.
 - [요구사항 분석](https://earthy-grouse-d42.notion.site/35a5723e06ee805ab86bf0675017af23?source=copy_link)
 - [유스케이스 분석](https://earthy-grouse-d42.notion.site/35a5723e06ee801e89fce037ad807918?source=copy_link)
 
