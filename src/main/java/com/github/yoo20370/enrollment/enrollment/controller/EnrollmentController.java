@@ -1,5 +1,6 @@
 package com.github.yoo20370.enrollment.enrollment.controller;
 
+import com.github.yoo20370.enrollment.enrollment.controller.request.CancelEnrollmentRequest;
 import com.github.yoo20370.enrollment.enrollment.controller.request.CreateEnrollmentRequest;
 import com.github.yoo20370.enrollment.enrollment.controller.response.CancelEnrollmentResponse;
 import com.github.yoo20370.enrollment.enrollment.controller.response.CreateEnrollmentResponse;
@@ -12,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
@@ -25,7 +25,7 @@ public interface EnrollmentController {
 
     ResponseEntity<ApiResponse<CancelEnrollmentResponse>> cancel(
         @NotNull @RequestHeader("X-User-Id") String userId,
-        @PathVariable("id") String enrollmentId
+        @Valid @RequestBody CancelEnrollmentRequest request
     );
 
     ResponseEntity<ApiResponse<Page<EnrollmentInfo>>> findMyEnrollments(
