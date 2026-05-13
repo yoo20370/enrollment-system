@@ -90,7 +90,7 @@ class EnrollmentServiceTest {
             .thenReturn(Optional.of(user));
         when(courseRepository.findWithLockById(courseId))
             .thenReturn(Optional.of(course));
-        when(enrollmentRepository.findByUserIdAndCourseId(userId, courseId))
+        when(enrollmentRepository.findByUserIdAndCourseIdAndStatusNot(userId, courseId, EnrollmentStatus.CANCELED))
             .thenReturn(Optional.empty());
         when(enrollmentRepository.save(any(Enrollment.class)))
             .thenReturn(savedEnrollment);
@@ -243,7 +243,7 @@ class EnrollmentServiceTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(courseRepository.findWithLockById(courseId)).thenReturn(Optional.of(course));
-        when(enrollmentRepository.findByUserIdAndCourseId(userId, courseId))
+        when(enrollmentRepository.findByUserIdAndCourseIdAndStatusNot(userId, courseId, EnrollmentStatus.CANCELED))
             .thenReturn(Optional.of(enrollment));
 
         // when then
