@@ -55,7 +55,6 @@ public class CourseRepositoryCustomImpl implements CourseRepositoryCustom{
             )
             .execute();
 
-        em.flush();
         em.clear();
 
         return (int) result;
@@ -73,7 +72,6 @@ public class CourseRepositoryCustomImpl implements CourseRepositoryCustom{
             )
             .execute();
 
-        em.flush();
         em.clear();
 
         return (int) result;

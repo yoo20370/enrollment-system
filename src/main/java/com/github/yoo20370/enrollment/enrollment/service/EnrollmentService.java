@@ -5,6 +5,7 @@ import com.github.yoo20370.enrollment.course.exception.CourseException;
 import com.github.yoo20370.enrollment.course.repository.CourseRepository;
 import com.github.yoo20370.enrollment.enrollment.controller.response.CancelEnrollmentResponse;
 import com.github.yoo20370.enrollment.enrollment.controller.response.EnrollmentInfo;
+import com.github.yoo20370.enrollment.enrollment.domain.EnrollmentStatus;
 import com.github.yoo20370.enrollment.enrollment.repository.EnrollmentRepository;
 import com.github.yoo20370.enrollment.enrollment.controller.response.CreateEnrollmentResponse;
 import com.github.yoo20370.enrollment.enrollment.domain.Enrollment;
@@ -56,9 +57,10 @@ public class EnrollmentService {
         course.validateCapacity();
         course.validateStatus();
 
-        Optional<Enrollment> result = enrollmentRepository.findByUserIdAndCourseId(
+        Optional<Enrollment> result = enrollmentRepository.findByUserIdAndCourseIdAndStatusNot(
             requesterId,
-            courseId
+            courseId,
+            EnrollmentStatus.CANCELED
         );
 
         if (result.isPresent()) {

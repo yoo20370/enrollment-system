@@ -1,5 +1,6 @@
 package com.github.yoo20370.enrollment.enrollment.controller;
 
+import com.github.yoo20370.enrollment.enrollment.controller.request.CancelEnrollmentRequest;
 import com.github.yoo20370.enrollment.enrollment.controller.request.CreateEnrollmentRequest;
 import com.github.yoo20370.enrollment.enrollment.controller.response.CancelEnrollmentResponse;
 import com.github.yoo20370.enrollment.enrollment.controller.response.CreateEnrollmentResponse;
@@ -52,14 +53,14 @@ public class EnrollmentControllerV1 implements EnrollmentController {
             .body(ApiResponse.of(response));
     }
 
-    @DeleteMapping("/{id}")
+    @PostMapping("/cancel")
     @Override
     public ResponseEntity<ApiResponse<CancelEnrollmentResponse>> cancel(
         @NotNull @RequestHeader("X-User-Id") String userId,
-        @PathVariable("id") String enrollmentId) {
+        @Valid @RequestBody CancelEnrollmentRequest request) {
 
         CancelEnrollmentResponse response = enrollmentService.cancel(
-            convertUuidFrom(enrollmentId),
+            convertUuidFrom(request.getEnrollmentId()),
             convertUuidFrom(userId)
         );
 

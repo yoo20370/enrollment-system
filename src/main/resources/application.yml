@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: enrollment-system
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:init.sql
