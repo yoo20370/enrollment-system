@@ -1,4 +1,7 @@
 spring:
+  profiles:
+    active: local
+
   application:
     name: enrollment-system
 
@@ -9,9 +12,15 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
         format_sql: true
     show-sql: true
+
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:init.sql
